@@ -1,4 +1,4 @@
-package com.kotlisoft.clouderity.ui.theme
+package com.kotlisoft.clouderity.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

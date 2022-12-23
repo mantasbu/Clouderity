@@ -1,4 +1,4 @@
-package com.kotlisoft.clouderity.ui.theme
+package com.kotlisoft.clouderity.presentation.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.kotlisoft.clouderity.ui.theme
+package com.kotlisoft.clouderity.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -35,8 +35,14 @@ fun ClouderityTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
         LightColorPalette
     }
 
+//    MaterialTheme(
+//        colors = colors,
+//        typography = Typography,
+//        shapes = Shapes,
+//        content = content
+//    )
+
     MaterialTheme(
-        colors = colors,
         typography = Typography,
         shapes = Shapes,
         content = content
