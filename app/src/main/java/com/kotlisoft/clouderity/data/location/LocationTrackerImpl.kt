@@ -5,8 +5,9 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.os.Looper
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.*
 import com.kotlisoft.clouderity.data.mappers.toCurrentLocation
 import com.kotlisoft.clouderity.domain.location.CurrentLocation
 import com.kotlisoft.clouderity.domain.location.LocationTracker
@@ -41,24 +42,32 @@ class LocationTrackerImpl @Inject constructor(
         }
 
         return suspendCancellableCoroutine { cont ->
-            locationClient.lastLocation.apply {
-                if (isComplete) {
-                    if (isSuccessful) {
-                        cont.resume(result.toCurrentLocation())
-                    } else {
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).apply {
+                setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
+                setWaitForAccurateLocation(true)
+            }.build()
+
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val location = locationResult.lastLocation
+                    cont.resume(location?.toCurrentLocation())
+                    locationClient.removeLocationUpdates(this) // Remove updates after receiving the location
+                }
+
+                override fun onLocationAvailability(locationAvailability: LocationAvailability) {
+                    if (!locationAvailability.isLocationAvailable) {
                         cont.resume(null)
+                        locationClient.removeLocationUpdates(this)
                     }
-                    return@suspendCancellableCoroutine
                 }
-                addOnSuccessListener {
-                    cont.resume(result.toCurrentLocation())
-                }
-                addOnFailureListener {
-                    cont.resume(null)
-                }
-                addOnCanceledListener {
-                    cont.cancel()
-                }
+            }
+
+            // Request a single location update
+            locationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
+            // Remove location updates if the coroutine is canceled
+            cont.invokeOnCancellation {
+                locationClient.removeLocationUpdates(locationCallback)
             }
         }
     }
