@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kotlisoft.clouderity.R
 import com.kotlisoft.clouderity.presentation.ui.theme.ClouderityTheme
 import com.kotlisoft.clouderity.presentation.ui.theme.LighterBlue
 import com.kotlisoft.clouderity.presentation.ui.theme.DarkerBlue
@@ -61,12 +63,25 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     viewModel.state.error?.let { error ->
-                        Text(
-                            text = error,
-                            color = Color.Red,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = error,
+                                color = Color.Red,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                            Button(
+                                onClick = {
+                                    viewModel.loadWeatherInfo()
+                                }
+                            ) {
+                                Text(text = getString(R.string.try_again))
+                            }
+                        }
                     }
                 }
             }
